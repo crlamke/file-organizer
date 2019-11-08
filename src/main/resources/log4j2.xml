@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <File name="FileLogger" fileName="logs/file-organizer.log">
+            <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+        <RollingFile name="RollingFile" fileName="logs/file-organizer2.log"
+                     filePattern="${log-path}/app-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>%d{dd/MM/yyyy HH:mm:ss} [%-5p/%t]: %C{1}(%L): %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+                <OnStartupTriggeringPolicy />
+            </Policies>
+            <DefaultRolloverStrategy max="100"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="Console" level="error"/>
+            <appender-ref ref="FileLogger" level="info"/>
+        </Root>
+    </Loggers>
+</Configuration>

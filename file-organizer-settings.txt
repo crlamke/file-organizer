@@ -1,0 +1,30 @@
+# This is the settings file for the file organizer application.
+# Note that all formats below are tab delimited, meaning you separate each value on a line by a tab.
+# The sections below are present as a suggestion. You can ignore them if your alignment is chaotic.
+
+# *** main-settings ***
+# This is the main settings section.
+
+# *** files-to-watch ***
+# This section contains watch paths that define the files/directories to watch.
+# Format and an example for this section follows:
+# WATCHPATH [File/Dir Path]	[Recursive Y or N]
+# ex. WATCHPATH c:\crl\	Y
+WATCHPATH	"c:\crl\down"	Y
+WATCHPATH	"c:\dev"	N
+
+# *** file-actions ***
+# This section defines what actions to take when a file/directory being watched changes.
+# Changes include creation, deletion, and modification.
+# ex. ACTION	GIF	MOVE	"c:\crl\dev\test"
+ACTION	GIF	MOVE	"c:\crl\dev\test"
+
+# *** file-types ***
+# This section contains file type definitions that determine a file's type.
+# Changes include creation, deletion, and modification.
+# ex. FILETYPEDEF	GIF	EXTENSION	.gif
+FILETYPEDEF	GIF	EXTENSION	.gif
+FILETYPEDEF	JPG	EXTENSION	.jpg	OR	EXTENSION	.jpeg
+FILETYPEDEF	PNG	EXTENSION	.png
+FILETYPEDEF	TXT	EXTENSION	.txt
+
