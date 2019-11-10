@@ -23,6 +23,8 @@
  */
 package org.lamke.fileorganizer;
 
+import static java.nio.file.StandardWatchEventKinds.*;
+
 /**
  * This class gets notifications and handles them according to their type and
  * other rules.
@@ -32,7 +34,7 @@ package org.lamke.fileorganizer;
 public class FileNotification {
 
     public enum NotificationType {
-        CREATE, DELETE, MODIFY
+        CREATE, DELETE, MODIFY, NONE
     }
 
     public NotificationType notificationType;
@@ -41,6 +43,19 @@ public class FileNotification {
     public FileNotification(NotificationType notificationType, String filePath) {
         this.notificationType = notificationType;
         this.filePath = filePath;
+    }
+
+    public FileNotification() {
+        this.notificationType = NotificationType.NONE;
+        this.filePath = null;
+    }
+
+    public void addFilePath(String path) {
+        this.filePath = path;
+    }
+
+    public void addNotificationType(NotificationType type) {
+        this.notificationType = type;
     }
 
 }

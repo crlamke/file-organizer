@@ -71,7 +71,6 @@ public class AppMain {
 
         // register directory and process its events
         fileWatcher.addWatchPath("c:\\crl\\dev\\test", true);
-
         ProcessEvents();
     }
 
@@ -104,8 +103,13 @@ public class AppMain {
         for (;;) {
 
             // Check for file notifications
-            FileNotification fileNotification
+            FileNotificationCollection notifications
                     = fileWatcher.getFileNotificationsPoll(10);
+            if (notifications != null) {
+                logger.info("{} notifications returned",
+                        notifications.getNotificationCount());
+
+            }
 
             // For each file change notification, we look up the file 
             // type to get the file type object, then look up the actions

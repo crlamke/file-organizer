@@ -19,12 +19,3 @@ WATCHPATH	"c:\dev"	N
 # ex. ACTION	GIF	MOVE	"c:\crl\dev\test"
 ACTION	GIF	MOVE	"c:\crl\dev\test"
 
-# *** file-types ***
-# This section contains file type definitions that determine a file's type.
-# Changes include creation, deletion, and modification.
-# ex. FILETYPEDEF	GIF	EXTENSION	.gif
-FILETYPEDEF	GIF	EXTENSION	.gif
-FILETYPEDEF	JPG	EXTENSION	.jpg	OR	EXTENSION	.jpeg
-FILETYPEDEF	PNG	EXTENSION	.png
-FILETYPEDEF	TXT	EXTENSION	.txt
-

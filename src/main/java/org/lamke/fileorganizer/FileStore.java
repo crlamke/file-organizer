@@ -23,26 +23,56 @@
  */
 package org.lamke.fileorganizer;
 
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * This class represents a file (including a directory) on the file system.
+ * This class holds all the files being processed by the file organizer app. It
+ * will keep a copy of the file information temporarily after processing to
+ * avoid duplicate processing in cases where an action triggers a new
+ * notification.
  *
  * @author Chris Lamke <https://chris.lamke.org>
  */
-public class FileType {
+public class FileStore {
 
-    // All supported file types are listed here.
-    //public enum FileType {
-    //    GIF, JPG, PNG, WORD, PPT, XLS, TXT, XML, PDF
-    //}
-    String fileTypeName = "Unkown";
-    String fileTypeDesc = "Unkown";
-    String createFileAction = "Move file to new location";
-    String modifyFileAction = "Log that file was modified";
-    String deleteFileAction = "Log that file was deleted";
+    List<FileRecord> files;
 
-    public FileType() {
+    FileStore() {
+        files = new ArrayList<>();
+    }
+
+    /**
+     * addNotification() Add a file notification to the notification collection.
+     *
+     * @param FileRecord FileRecord to add
+     */
+    public void addFileRecord(FileRecord fileRecord) {
+        files.add(fileRecord);
+    }
+
+    /**
+     * removeFileRecord() Remove a file Record from notification collection.
+     *
+     * @param FileRecord FileRecord to remove
+     */
+    public void removeFileRecord(FileRecord fileRecord) {
+        files.remove(fileRecord);
+    }
+
+    /**
+     * popNotification() Remove the next FileRecord from notification
+     * collection and return it.
+     *
+     */
+    public FileRecord popFileRecord() {
+        FileRecord fileRecord = null;
+
+        if (!files.isEmpty()) {
+            fileRecord = files.get(0);
+            files.remove(0);
+        }
+        return fileRecord;
 
     }
 

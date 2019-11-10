@@ -213,11 +213,12 @@ public class FileSystemWatcher {
      *
      * @author Chris Lamke <https://chris.lamke.org>
      * @param millisecs as poll timeout in millisecs
-     * @return FileNotification
+     * @return FileNotificationCollection
      */
-    public FileNotification getFileNotificationsPoll(int millisecs) {
+    public FileNotificationCollection getFileNotificationsPoll(int millisecs) {
 
         logger.debug("getFileNotificationsPoll with timeout = {} ms", millisecs);
+        FileNotificationCollection notifications = null;
 
         // wait for key to be signalled
         WatchKey key;
@@ -225,15 +226,16 @@ public class FileSystemWatcher {
         // Need to support WatchKey watchKey = watchService.poll(long timeout, TimeUnit units);
         if (key == null) {
             logger.debug("No notification available");
-            return null;
+            return notifications;
         }
 
         Path dir = watchKeys.get(key);
         if (dir == null) {
             logger.error("WatchKey not recognized");
-            return null;
+            return notifications;
         }
-
+        notifications = new FileNotificationCollection();
+        
         for (WatchEvent<?> event : key.pollEvents()) {
             WatchEvent.Kind kind = event.kind();
 
@@ -250,7 +252,37 @@ public class FileSystemWatcher {
 
             // print out event
             logger.info("Notification {}: {}\n", event.kind().name(), child);
+            FileNotification notification = new FileNotification();
+            notification.addFilePath(child.toString());
 
+            switch (event.kind().name()) {
+                case "ENTRY_CREATE":
+                    notification.addNotificationType(
+                            FileNotification.NotificationType.CREATE);
+                    break;
+                case "ENTRY_DELETE":
+                    notification.addNotificationType(
+                            FileNotification.NotificationType.DELETE);
+                    break;
+                case "ENTRY_MODIFY":
+                    notification.addNotificationType(
+                            FileNotification.NotificationType.MODIFY);
+
+                    break;
+                case "OVERFLOW":
+                    notification.addNotificationType(
+                            FileNotification.NotificationType.NONE);
+                    logger.error(
+                            "ERROR: FileWatcher reported overflow condition");
+                    break;
+
+                default:
+                    logger.error(
+                            "ERROR: FileWatcher reported undefined event kind");
+            }
+
+            notifications.addNotification(notification);
+            
             // if directory is created, and watching recursively, then
             // register it and its sub-directories
             // TODO need to handle checking for recursive flag when 
@@ -279,10 +311,7 @@ public class FileSystemWatcher {
             }
         }
 
-        return null;
-        //FileNotification test = new FileNotification();
-
-        //return test;
+        return notifications;
     }
 
     /**
@@ -290,10 +319,9 @@ public class FileSystemWatcher {
      * monitored and blocks until a notification is available, then returns a
      * list of notifications.
      *
-     * @author Chris Lamke <https://chris.lamke.org>
-     * @return
+     * @return FileNotificationCollection
      */
-    public FileNotification getFileNotificationsBlock() {
+    public FileNotificationCollection getFileNotificationsBlock() {
         // Not implemented
 
         // FileNotification test = new FileNotification();

@@ -110,9 +110,6 @@ public class Config {
                     case "ACTION":
                         addAction(currentLine, tokenizer);
                         break;
-                    case "FILETYPEDEF":
-                        addTypeRule(currentLine, tokenizer);
-                        break;
                     default:
                         logger.error("ERROR: Bad Line Format - {}", currentLine);
                 }
@@ -147,7 +144,4 @@ public class Config {
 
     }
 
-    private void addTypeRule(String rule, StringTokenizer tokenizer) {
-
-    }
 }

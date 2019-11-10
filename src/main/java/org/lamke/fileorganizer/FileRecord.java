@@ -23,15 +23,28 @@
  */
 package org.lamke.fileorganizer;
 
+import java.util.logging.Logger;
+
 /**
- * This class holds all the files being processed by the file organizer app. It
- * will keep a copy of the file information for 
+ * This class represents a file (including a directory) on the file system.
+ *
  * @author Chris Lamke <https://chris.lamke.org>
  */
-public class FileBucket {
-    
-    FileBucket() {
-        
+public class FileRecord {
+
+    boolean isDir = false;
+    // All supported file types are listed here.
+    //public enum FileRecord {
+    //    GIF, JPG, PNG, WORD, PPT, XLS, TXT, XML, PDF
+    //}
+    String fileTypeName = "Unknown";
+    String fileTypeDesc = "Unknown";
+    String createFileAction = "Move file to new location";
+    String modifyFileAction = "Log that file was modified";
+    String deleteFileAction = "Log that file was deleted";
+
+    public FileRecord() {
+
     }
-    
+
 }

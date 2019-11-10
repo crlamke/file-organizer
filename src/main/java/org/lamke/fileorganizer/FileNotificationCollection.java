@@ -40,4 +40,49 @@ public class FileNotificationCollection {
         notifications = new ArrayList<>();
     }
 
+    /**
+     * addNotification() Add a file notification to the notification collection.
+     *
+     * @param FileNotification file notification to add
+     */
+    public void addNotification(FileNotification notification) {
+        notifications.add(notification);
+    }
+
+    /**
+     * removeNotification() Remove a file notification from notification
+     * collection.
+     *
+     * @param FileNotification file notification to remove
+     */
+    public void removeNotification(FileNotification notification) {
+        notifications.remove(notification);
+    }
+
+    /**
+     * popNotification() Remove the next file notification from notification
+     * collection and return it.
+     *
+     */
+    public FileNotification popNotification() {
+        FileNotification notification = null;
+
+        if (!notifications.isEmpty()) {
+            notification = notifications.get(0);
+            notifications.remove(0);
+        }
+        return notification;
+
+    }
+
+    /**
+     * getNotificationCount() Get a count of the file notifications
+     * in the collection.
+     *
+     * @return int number of notifications in this collection
+     */
+    public int getNotificationCount() {
+        return notifications.size();
+    }
+
 }

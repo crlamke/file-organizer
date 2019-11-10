@@ -26,8 +26,8 @@ package org.lamke.fileorganizer;
 import java.util.ArrayList;
 
 /**
- * This class holds all the FileType objects and provides a way to retrieve a
- * FileType based on its name and other properties.
+ * This class holds all the FileRecord objects and provides a way to retrieve a
+ FileRecord based on its name and other properties.
  *
  * @author Chris Lamke <https://chris.lamke.org>
  */
@@ -36,7 +36,7 @@ public class FileTypeCollection {
     ArrayList fileTypes;
 
     public FileTypeCollection() {
-        fileTypes = new ArrayList < FileType > ();
+        fileTypes = new ArrayList < FileRecord > ();
     }
 
 }
