@@ -100,6 +100,9 @@ public class AppMain {
     }
 
     private void ProcessEvents() throws InterruptedException {
+
+        FileStore files = FileStore.getInstance();
+
         for (;;) {
 
             // Check for file notifications
@@ -108,7 +111,16 @@ public class AppMain {
             if (notifications != null) {
                 logger.info("{} notifications returned",
                         notifications.getNotificationCount());
-
+                while (notifications.getNotificationCount() > 0) {
+                    FileNotification notification
+                            = notifications.popNotification();
+                    logger.info("Notification: {}",
+                            notification.getNotificationAsString());
+                    FileRecord file = new FileRecord();
+                    files.addFileRecord(file);
+                    logger.info("Added file to store. New store count is: {}",
+                            files.getFileRecordCount());
+                }
             }
 
             // For each file change notification, we look up the file 

@@ -57,5 +57,11 @@ public class FileNotification {
     public void addNotificationType(NotificationType type) {
         this.notificationType = type;
     }
+    
+    public String getNotificationAsString() {
+        String notification = this.notificationType.toString() + ": "
+                + this.filePath;
+        return notification;
+    }
 
 }

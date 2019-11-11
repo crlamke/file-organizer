@@ -23,6 +23,7 @@
  */
 package org.lamke.fileorganizer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,16 +31,35 @@ import java.util.List;
  * This class holds all the files being processed by the file organizer app. It
  * will keep a copy of the file information temporarily after processing to
  * avoid duplicate processing in cases where an action triggers a new
- * notification.
+ * notification. This is a singleton class. Use the getInstance method to access
+ * the object.
  *
  * @author Chris Lamke <https://chris.lamke.org>
  */
 public class FileStore {
 
+    private static FileStore fileStoreInstance = null;
     List<FileRecord> files;
 
-    FileStore() {
+    /**
+     * Private FileStore constructor because this is a singleton class.
+     *
+     */
+    private FileStore() {
         files = new ArrayList<>();
+    }
+
+    /**
+     * Public static method to get instance of Config class.
+     *
+     * @author Chris Lamke <https://chris.lamke.org>
+     */
+    public static FileStore getInstance() {
+        if (fileStoreInstance == null) {
+            fileStoreInstance = new FileStore();
+        }
+
+        return fileStoreInstance;
     }
 
     /**
@@ -61,8 +81,8 @@ public class FileStore {
     }
 
     /**
-     * popNotification() Remove the next FileRecord from notification
-     * collection and return it.
+     * popNotification() Remove the next FileRecord from notification collection
+     * and return it.
      *
      */
     public FileRecord popFileRecord() {
@@ -74,6 +94,16 @@ public class FileStore {
         }
         return fileRecord;
 
+    }
+    
+        /**
+     * getNotificationCount() Get a count of the file notifications
+     * in the collection.
+     *
+     * @return int number of notifications in this collection
+     */
+    public int getFileRecordCount() {
+        return files.size();
     }
 
 }
