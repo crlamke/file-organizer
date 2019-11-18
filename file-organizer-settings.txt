@@ -1,6 +1,7 @@
 # This is the settings file for the file organizer application.
 # Note that all formats below are tab delimited, meaning you separate each value on a line by a tab.
 # The sections below are present as a suggestion. You can ignore them if your alignment is chaotic.
+# Supported file types: GIF, JPG, PNG, WORD, PPT, XLS, TXT, XML, PDF
 
 # *** main-settings ***
 # This is the main settings section.
@@ -9,13 +10,19 @@
 # This section contains watch paths that define the files/directories to watch.
 # Format and an example for this section follows:
 # WATCHPATH [File/Dir Path]	[Recursive Y or N]
-# ex. WATCHPATH c:\crl\	Y
-WATCHPATH	"c:\crl\down"	Y
-WATCHPATH	"c:\dev"	N
+# ex. WATCHPATH "c:\crl\"	Y
+WATCHPATH	"c:\crl\down"	N
+WATCHPATH	"c:\crl\dev\test\src"	N
 
 # *** file-actions ***
 # This section defines what actions to take when a file/directory being watched changes.
 # Changes include creation, deletion, and modification.
-# ex. ACTION	GIF	MOVE	"c:\crl\dev\test"
-ACTION	GIF	MOVE	"c:\crl\dev\test"
+# Fields must be formatted in the order below:
+#       ACTION    FileType    ChangeType  ActionType  ActionPath
+# ex.   ACTION      GIF         CREATE      MOVE      "c:\crl\dev\test"
+ACTION	GIF	CREATE  MOVE	"c:\crl\dev\test\dest"
+ACTION	TXT	CREATE  MOVE	"c:\crl\dev\test\dest"
+ACTION	TXT	MOD     MSG	"c:\crl\dev\test\dest"
+ACTION	PNG	CREATE  MOVE	"c:\crl\dev\test\dest"
+ACTION	JPG	CREATE  MOVE	"c:\crl\dev\test\dest"
 

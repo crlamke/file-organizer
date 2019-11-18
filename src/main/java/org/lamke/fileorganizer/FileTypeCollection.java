@@ -23,20 +23,81 @@
  */
 package org.lamke.fileorganizer;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * This class holds all the FileRecord objects and provides a way to retrieve a
- FileRecord based on its name and other properties.
+ * This class holds all the FileTypeDefinition objects and provides a way to
+ * retrieve a FileTypeDefinition based on its name and other properties. This is
+ * a singleton class. Use the getInstance method to access the object.
  *
  * @author Chris Lamke <https://chris.lamke.org>
  */
 public class FileTypeCollection {
 
-    ArrayList fileTypes;
+    private static FileTypeCollection fileTypeCollectionInstance = null;
 
-    public FileTypeCollection() {
-        fileTypes = new ArrayList < FileRecord > ();
+    List<FileTypeDefinition> fileTypes;
+
+    /**
+     * Private FileTypeCollection constructor because this is a singleton class.
+     *
+     */
+    private FileTypeCollection() {
+        fileTypes = new ArrayList<>();
+    }
+
+    /**
+     * Public static method to get instance of FileTypeCollection class.
+     *
+     * @author Chris Lamke <https://chris.lamke.org>
+     */
+    public static FileTypeCollection getInstance() throws IOException {
+        if (fileTypeCollectionInstance == null) {
+            fileTypeCollectionInstance = new FileTypeCollection();
+        }
+
+        return fileTypeCollectionInstance;
+    }
+
+    /**
+     * addFileType() Add a file type to the type collection.
+     *
+     * @param FileTypeDefinition file type to add
+     */
+    public void addFileType(FileTypeDefinition fileType) {
+        fileTypes.add(fileType);
+    }
+
+    /**
+     * removeNotification() Remove a file type from type collection.
+     *
+     * @param FileTypeDefinition file type to remove
+     */
+    public void removeFileType(FileTypeDefinition fileType) {
+        fileTypes.remove(fileType);
+    }
+
+    /**
+     * popNotification() Remove the next file notification from notification
+     * collection and return it.
+     *
+     */
+    public FileTypeDefinition getFileType() {
+        FileTypeDefinition fileTypeDef = null;
+
+        return fileTypeDef;
+
+    }
+
+    /**
+     * getFileTypeCount() Get a count of the file types in the collection.
+     *
+     * @return int number of file types in this collection
+     */
+    public int getFileTypeCount() {
+        return fileTypes.size();
     }
 
 }

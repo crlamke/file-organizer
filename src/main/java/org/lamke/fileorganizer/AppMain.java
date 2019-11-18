@@ -70,7 +70,7 @@ public class AppMain {
         fileWatcher = FileSystemWatcher.getInstance();
 
         // register directory and process its events
-        fileWatcher.addWatchPath("c:\\crl\\dev\\test", true);
+        //fileWatcher.addWatchPath("c:\\crl\\dev\\test", true);
         ProcessEvents();
     }
 

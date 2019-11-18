@@ -96,9 +96,9 @@ public class FileSystemWatcher {
     public boolean addWatchPath(String watchPath, boolean isRecursive) throws IOException {
         Path path = Paths.get(watchPath);
         if (isRecursive == true) {
-            return registerWatchPathSingle(path);
-        } else {
             return registerWatchPathWithRecursion(path);
+        } else {
+            return registerWatchPathSingle(path);
         }
     }
 

@@ -43,6 +43,7 @@ public class Config {
     private static Config configInstance = null;
 
     private FileSystemWatcher watcher;
+    private FileTypeCollection fileTypes;
 
     private Logger logger = LogManager.getLogger(AppMain.class.getName());
     private String configFile = null;
@@ -55,6 +56,7 @@ public class Config {
      */
     private Config() throws IOException {
         watcher = FileSystemWatcher.getInstance();
+        fileTypes = FileTypeCollection.getInstance();
     }
 
     /**
@@ -135,13 +137,34 @@ public class Config {
 
     }
 
-    private void addWatch(String watch, StringTokenizer tokenizer) throws IOException {
+    private void addWatch(String watchLine, StringTokenizer tokenizer) throws IOException {
         // Should be two more tokens, a path and a recursion choice
-        //watcher.addWatchPath("c:\\crl\\dev\\test", true);
+        String path = tokenizer.nextToken();
+        String recursion = tokenizer.nextToken();
+        boolean isRecursive = false;        
+        if (recursion.equals("Y") || recursion.equals("y")) {
+            isRecursive = true;
+        }
+        
+        logger.info("Adding Watch Path: {}. Recursion = {}", path, isRecursive);
+        path = path.replace("\"", "");
+        watcher.addWatchPath(path, isRecursive);
     }
 
-    private void addAction(String action, StringTokenizer tokenizer) {
-
+    private void addAction(String actionLine, StringTokenizer tokenizer) {
+        //ACTION	GIF	MOVE	"c:\crl\dev\test\dest"
+        String fileType = tokenizer.nextToken();
+        String changeType = tokenizer.nextToken();
+        String action = tokenizer.nextToken();
+        String path = tokenizer.nextToken();
+        
+        logger.info(
+                "Adding action: {} for file type {}, change type {}, path {}",
+                action, fileType, changeType, path);
+        path = path.replace("\"", "");
+        FileTypeDefinition fileTypeDefinition = new FileTypeDefinition();
+        fileTypes.addFileType(fileTypeDefinition);
+        
     }
 
 }
