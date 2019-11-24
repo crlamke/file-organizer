@@ -35,6 +35,7 @@ import static java.nio.file.LinkOption.*;
 import java.nio.file.attribute.*;
 import java.io.*;
 import java.util.*;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,7 +54,7 @@ public class FileSystemWatcher {
     private static FileSystemWatcher watcherInstance = null;
 
     private final Logger logger = LogManager.getLogger(FileSystemWatcher.class.getName());
-    private final WatchService watchService;
+    private WatchService watchService;
     private Map<WatchKey, Path> watchKeys;
 
     @SuppressWarnings("unchecked")
@@ -66,15 +67,18 @@ public class FileSystemWatcher {
      *
      * @author Chris Lamke <https://chris.lamke.org>
      */
-    private FileSystemWatcher() throws IOException {
-        watchService = FileSystems.getDefault().newWatchService();
-        watchKeys = new HashMap<WatchKey, Path>();
+    private FileSystemWatcher() {
+        try {
+            watchService = FileSystems.getDefault().newWatchService();
+            watchKeys = new HashMap<>();
+        } catch (IOException e) {
+            logger.log(Level.ERROR, e.toString());
+        }
     }
 
     /**
      * Public static method to get instance of Config class.
      *
-     * @author Chris Lamke <https://chris.lamke.org>
      * @return FileSystemWatcher instance
      */
     public static FileSystemWatcher getInstance() throws IOException {
@@ -84,6 +88,7 @@ public class FileSystemWatcher {
 
         return watcherInstance;
     }
+
 
     /**
      * Register the given directory with the WatchService
@@ -130,10 +135,10 @@ public class FileSystemWatcher {
         // See if the path was already registered and this is an update.
         Path existingPath = watchKeys.get(watchKey);
         if (existingPath == null) {
-            logger.info("Registering path {}", path);
+            logger.debug("Registering path {}", path);
         } else {
             if (!path.equals(existingPath)) {
-                logger.info("Updating path {} -> ", existingPath, path);
+                logger.debug("Updating path {} -> ", existingPath, path);
             }
         }
 
@@ -174,10 +179,10 @@ public class FileSystemWatcher {
         // See if the path was already registered and this is an update.
         Path existingPath = watchKeys.get(watchKey);
         if (existingPath == null) {
-            logger.info("Registering path {}", path);
+            logger.debug("Registering path {}", path);
         } else {
             if (!path.equals(existingPath)) {
-                logger.info("Updating path {} -> ", existingPath, path);
+                logger.debug("Updating path {} -> ", existingPath, path);
             }
         }
 
@@ -235,7 +240,7 @@ public class FileSystemWatcher {
             return notifications;
         }
         notifications = new FileNotificationCollection();
-        
+
         for (WatchEvent<?> event : key.pollEvents()) {
             WatchEvent.Kind kind = event.kind();
 
@@ -251,7 +256,7 @@ public class FileSystemWatcher {
             Path child = dir.resolve(name);
 
             // print out event
-            logger.info("Notification {}: {}\n", event.kind().name(), child);
+            logger.debug("Notification {}: {}\n", event.kind().name(), child);
             FileNotification notification = new FileNotification();
             notification.addFilePath(child.toString());
 
@@ -282,7 +287,7 @@ public class FileSystemWatcher {
             }
 
             notifications.addNotification(notification);
-            
+
             // if directory is created, and watching recursively, then
             // register it and its sub-directories
             // TODO need to handle checking for recursive flag when 
@@ -315,7 +320,7 @@ public class FileSystemWatcher {
     }
 
     /**
-     * This method checks to see if any files have changed in the paths being
+     * NOT IMPLEMENTED - This method checks to see if any files have changed in the paths being
      * monitored and blocks until a notification is available, then returns a
      * list of notifications.
      *

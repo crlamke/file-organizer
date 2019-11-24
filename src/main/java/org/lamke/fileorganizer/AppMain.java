@@ -55,12 +55,13 @@ public class AppMain {
      * @throws java.io.IOException
      */
     private void start() throws IOException, InterruptedException {
-        String defaultSettingsPath = "c:\\Users\\chris\\OneDrive\\InWork\\fileOrganizer\\";
+        String defaultSettingsPath
+                = "c:\\Users\\chris\\OneDrive\\InWork\\fileOrganizer\\";
 
         // Load settings into Config from file-organizer-settings.txt
         String settingsFilePath = defaultSettingsPath
                 + "file-organizer-settings.txt";
-        logger.info("Creating Config");
+        logger.debug("Creating Config");
         Config config = Config.getInstance();
         config.setConfigPath(settingsFilePath);
         config.loadConfig();
@@ -74,42 +75,29 @@ public class AppMain {
         ProcessEvents();
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException,
+            InterruptedException {
 
         AppMain app = new AppMain();
         app.start();
 
-
-        /*if (validateArgs(args) == false) {
-            usage();
-            System.exit(-1);
-        }
-         */
-    }
-
-    private static void usage() {
-        System.err.println("usage: java file-organizer [-r] dir0 dir1 ...");
-    }
-
-    private static boolean validateArgs(String[] args) {
-        // parse arguments
-        if (args.length == 0 || args.length > 2) {
-            usage();
-        }
-        return true;
     }
 
     private void ProcessEvents() throws InterruptedException {
 
         FileStore files = FileStore.getInstance();
 
+        logger.info("FileStore created. Store count is: {}",
+                files.getFileRecordCount());
+        
         for (;;) {
 
             // Check for file notifications
             FileNotificationCollection notifications
                     = fileWatcher.getFileNotificationsPoll(10);
+
             if (notifications != null) {
-                logger.info("{} notifications returned",
+                logger.debug("{} notifications returned",
                         notifications.getNotificationCount());
                 while (notifications.getNotificationCount() > 0) {
                     FileNotification notification
@@ -123,10 +111,10 @@ public class AppMain {
                 }
             }
 
-            // For each file change notification, we look up the file 
-            // type to get the file type object, then look up the actions
-            // defined in the file type object and perform those actions.
+            // Process any file events
             // Check whether reminders are due
+            // Check whether the user has indicated they want to quit
+            // or has changed the app settings/configuration.
             //logger.info("Sleeping 1 second");
             Thread.sleep(1000);
         }
