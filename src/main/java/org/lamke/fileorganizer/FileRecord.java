@@ -32,11 +32,16 @@ import java.util.logging.Logger;
  */
 public class FileRecord {
 
-    boolean isDir = false;
+    private boolean isDir = false;
+    private boolean isValidated = false;
     // All supported file types are listed here.
     //public enum FileRecord {
     //    GIF, JPG, PNG, WORD, PPT, XLS, TXT, XML, PDF
     //}
+    String filePath = null;
+    String fileName = null;
+    FileNotification.NotificationType notificationType
+            = FileNotification.NotificationType.NONE;
     String fileTypeName = "Unknown";
     String fileTypeDesc = "Unknown";
     String createFileAction = "Move file to new location";
@@ -47,4 +52,25 @@ public class FileRecord {
 
     }
 
+    public FileRecord(String filePath,
+            FileNotification.NotificationType notificationType) {
+        this.filePath = filePath;
+        this.notificationType = notificationType;
+    }
+
+    public boolean validateFileRecord() {
+        FileUtilities fileUtilities = FileUtilities.getInstance();
+
+        // Verify if path exists and whether it's a directory
+        if (fileUtilities.filePathExists(filePath)) {
+            isValidated = true;
+            isDir = fileUtilities.isDirectory(filePath);
+            fileName = fileUtilities.getFileNameFromPath(filePath);
+        }
+        return isValidated;
+    }
+
+    public String getPath() {
+        return filePath;
+    }
 }

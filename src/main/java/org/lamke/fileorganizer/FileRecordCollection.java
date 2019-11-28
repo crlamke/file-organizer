@@ -26,6 +26,7 @@ package org.lamke.fileorganizer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 /**
  * This class holds all the files being processed by the file organizer app. It
@@ -36,17 +37,17 @@ import java.util.List;
  *
  * @author Chris Lamke <https://chris.lamke.org>
  */
-public class FileStore {
+public class FileRecordCollection {
 
-    private static FileStore fileStoreInstance = null;
-    List<FileRecord> files;
+    private static FileRecordCollection fileStoreInstance = null;
+    HashMap<String, FileRecord> files;
 
     /**
      * Private FileStore constructor because this is a singleton class.
      *
      */
-    private FileStore() {
-        files = new ArrayList<>();
+    private FileRecordCollection() {
+        files = new HashMap<>();
     }
 
     /**
@@ -54,51 +55,75 @@ public class FileStore {
      *
      * @author Chris Lamke <https://chris.lamke.org>
      */
-    public static FileStore getInstance() {
+    public static FileRecordCollection getInstance() {
         if (fileStoreInstance == null) {
-            fileStoreInstance = new FileStore();
+            fileStoreInstance = new FileRecordCollection();
         }
 
         return fileStoreInstance;
     }
 
     /**
-     * addNotification() Add a file notification to the notification collection.
+     * addFileRecord() Add a file record to the collection.
      *
-     * @param FileRecord FileRecord to add
+     * @param String filePath Full path to the file
+     * @param FileRecord fileRecord FileRecord object
      */
-    public void addFileRecord(FileRecord fileRecord) {
-        files.add(fileRecord);
+    public void addFileRecord(String filePath, FileRecord fileRecord) {
+        files.put(filePath, fileRecord);
     }
 
     /**
-     * removeFileRecord() Remove a file Record from notification collection.
+     * removeFileRecord() Remove a file Record.
      *
-     * @param FileRecord FileRecord to remove
+     * @param fileRecord
      */
     public void removeFileRecord(FileRecord fileRecord) {
-        files.remove(fileRecord);
+        files.remove(fileRecord.getPath());
     }
 
     /**
-     * popNotification() Remove the next FileRecord from notification collection
-     * and return it.
+     * removeFileRecord() Remove a file Record.
      *
+     * @param filePath path of file to remove
      */
-    public FileRecord popFileRecord() {
-        FileRecord fileRecord = null;
+    public void removeFileRecord(String filePath) {
+        files.remove(filePath);
+    }
 
-        if (!files.isEmpty()) {
-            fileRecord = files.get(0);
-            files.remove(0);
-        }
-        return fileRecord;
-
+        /**
+     * getFileRecord() Find and return a file Record.
+     *
+     * @param filePath path of file to return
+     * @return FileRecord matching filePath string
+     */
+    public FileRecord getFileRecord(String filePath) {
+        return files.get(filePath);
     }
     
-        /**
-     * getNotificationCount() Get a count of the file notifications
-     * in the collection.
+    /**
+     * recordExists() Check to see if this record exists
+     *
+     * @param fileRecord
+     * @return true if record exists, false otherwise
+     */
+    public boolean recordExists(FileRecord fileRecord) {
+        return files.containsKey(fileRecord.getPath());
+    }
+
+    /**
+     * recordExists() Check to see if this record exists
+     *
+     * @param String filePath
+     * @return true if record exists, false otherwise
+     */
+    public boolean recordExists(String filePath) {
+        return files.containsKey(filePath);
+    }
+
+    /**
+     * getNotificationCount() Get a count of the file notifications in the
+     * collection.
      *
      * @return int number of notifications in this collection
      */

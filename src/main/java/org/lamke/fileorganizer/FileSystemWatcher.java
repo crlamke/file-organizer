@@ -24,8 +24,10 @@
 
  /* 
  * Based on 
+ * https://docs.oracle.com/javase/tutorial/essential/io/notification.html
  * https://docs.oracle.com/javase/tutorial/essential/io/examples/WatchDir.java 
- * 
+ * https://www.baeldung.com/java-nio2-watchservice
+ *
  */
 package org.lamke.fileorganizer;
 

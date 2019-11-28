@@ -37,6 +37,7 @@ public class AppMain {
     private WatchPathCollection watchPaths;
     private TaskQueue tasks;
     private FileSystemWatcher fileWatcher;
+    FileRecordCollection files;
 
     /**
      * Constructor for main class
@@ -69,6 +70,7 @@ public class AppMain {
         watchPaths = new WatchPathCollection();
         tasks = new TaskQueue();
         fileWatcher = FileSystemWatcher.getInstance();
+        files = FileRecordCollection.getInstance();
 
         // register directory and process its events
         //fileWatcher.addWatchPath("c:\\crl\\dev\\test", true);
@@ -85,31 +87,10 @@ public class AppMain {
 
     private void ProcessEvents() throws InterruptedException {
 
-        FileStore files = FileStore.getInstance();
-
-        logger.info("FileStore created. Store count is: {}",
-                files.getFileRecordCount());
-        
         for (;;) {
 
             // Check for file notifications
-            FileNotificationCollection notifications
-                    = fileWatcher.getFileNotificationsPoll(10);
-
-            if (notifications != null) {
-                logger.debug("{} notifications returned",
-                        notifications.getNotificationCount());
-                while (notifications.getNotificationCount() > 0) {
-                    FileNotification notification
-                            = notifications.popNotification();
-                    logger.info("Notification: {}",
-                            notification.getNotificationAsString());
-                    FileRecord file = new FileRecord();
-                    files.addFileRecord(file);
-                    logger.info("Added file to store. New store count is: {}",
-                            files.getFileRecordCount());
-                }
-            }
+            processFileNotifications();
 
             // Process any file events
             // Check whether reminders are due
@@ -120,4 +101,110 @@ public class AppMain {
         }
 
     }
+
+    private void processFileNotifications() {
+        FileNotificationCollection notifications
+                = fileWatcher.getFileNotificationsPoll(10);
+        if (notifications == null) {
+            // No notifications to process right now
+            logger.debug("No notifications found");
+            return;
+        }
+
+        logger.debug("{} notifications returned",
+                notifications.getNotificationCount());
+
+        while (notifications.getNotificationCount() > 0) {
+            FileNotification notification
+                    = notifications.popNotification();
+            logger.info("Notification: {}",
+                    notification.getNotificationAsString());
+
+            switch (notification.getFileNotificationType()) {
+                case CREATE:
+                    processFileCreation(notification);
+                    break;
+                case DELETE:
+                    processFileDeletion(notification);
+                    break;
+                case MODIFY:
+                    processFileModification(notification);
+                    break;
+                case NONE:
+                    logger.error(
+                            "ERROR: FileWatcher reported overflow condition");
+                    break;
+
+                default:
+                    logger.error(
+                            "ERROR: FileWatcher reported undefined event kind");
+            }
+
+        }
+    }
+
+    private void processFileCreation(FileNotification notification) {
+        boolean fileExistsOnDisk = files.recordExists(notification.getFilePath());
+        if (fileExistsOnDisk) {
+            logger.info(
+                    "File Creation: File {} already exists in file store",
+                    notification.getFilePath());
+            return;
+        }
+
+        FileRecord file = new FileRecord(notification.getFilePath(),
+                notification.getFileNotificationType());
+        if (file.validateFileRecord()) {
+            files.addFileRecord(notification.getFilePath(), file);
+            logger.info(
+                    "Added file to store. New store count is: {}",
+                    files.getFileRecordCount());
+        } else {
+            logger.info(
+                    "File validation failed. ",
+                    "File not added file to store."
+            );
+        }
+    }
+
+    private void processFileDeletion(FileNotification notification) {
+        boolean fileExistsOnDisk = files.recordExists(notification.getFilePath());
+        if (!fileExistsOnDisk) {
+            logger.info(
+                    "File Deletion: File {} does not exist in file store",
+                    notification.getFilePath());
+            return;
+        }
+
+        logger.info("File Deletion: Removing {} from file store",
+                notification.getFilePath());
+        files.removeFileRecord(notification.getFilePath());
+        logger.info(
+                "Removed file from store. New store count is: {}",
+                files.getFileRecordCount());
+    }
+
+    private void processFileModification(FileNotification notification) {
+        boolean fileExistsOnDisk = files.recordExists(notification.getFilePath());
+        if (!fileExistsOnDisk) {
+            logger.info(
+                    "File Modification: File {} does not exist in file store",
+                    notification.getFilePath());
+            return;
+        }
+
+        FileRecord file = files.getFileRecord(notification.getFilePath());
+
+        if (file != null) {
+            // Update the file record
+            logger.info(
+                    "File Modification: Modifying {} record",
+                    file.getPath());
+        } else {
+            logger.info(
+                    "File Modification: Failed to find {} record",
+                    notification.getFilePath());
+        }
+    }
+
 }
