@@ -24,24 +24,38 @@ package org.lamke.fileorganizer;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 /**
  *
  * @author Chris Lamke <https://chris.lamke.org>
  */
 public class FileTypeDefinition {
-    
+
     // All supported file types are listed here.
     //public enum FileRecord {
     //    GIF, JPG, PNG, WORD, PPT, XLS, TXT, XML, PDF
     //}
-    String fileTypeName = "Unknown";
-    String fileTypeDesc = "Unknown";
-    String createFileAction = "Move file to new location";
-    String modifyFileAction = "Log that file was modified";
-    String deleteFileAction = "Log that file was deleted";
-    
+    String fileTypeName = "";
+    String changeType = "";
+    String action = "";
+    String changePath = "";
+    int priority = 1;
+
     public FileTypeDefinition() {
     }
-    
+
+    public FileTypeDefinition(String fileTypeName, String changeType,
+            String action, String changePath, int priority) {
+        this.fileTypeName = fileTypeName;
+        this.changeType = changeType;
+        this.action = action;
+        this.changePath = changePath;
+        this.priority = priority;
+    }
+
+    public String getFileTypeDefinitionAsString() {
+        String fileTypeDef = "Type " + fileTypeName + " change " + changeType +
+                " action " + action + " priority " + priority + " path " + 
+                changePath;
+        return fileTypeDef;
+    }
 }

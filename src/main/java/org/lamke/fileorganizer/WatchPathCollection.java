@@ -33,10 +33,29 @@ import java.util.ArrayList;
  */
 public class WatchPathCollection {
 
-    ArrayList watchPaths;
+    private static WatchPathCollection watchPathCollectionInstance = null;
+    ArrayList<WatchPath> watchPaths;
 
-    WatchPathCollection() {
-        watchPaths = new ArrayList<WatchPath>();
+    /**
+     * Private WatchPathCollection constructor because this is a singleton
+     * class.
+     *
+     */
+    private WatchPathCollection() {
+        watchPaths = new ArrayList<>();
+    }
+
+    /**
+     * Public static method to get instance of Config class.
+     *
+     * @author Chris Lamke <https://chris.lamke.org>
+     */
+    public static WatchPathCollection getInstance() {
+        if (watchPathCollectionInstance == null) {
+            watchPathCollectionInstance = new WatchPathCollection();
+        }
+
+        return watchPathCollectionInstance;
     }
 
     public void addWatchPath(WatchPath watchPath) {
@@ -46,8 +65,14 @@ public class WatchPathCollection {
     public void removeWatchPath(WatchPath watchPath) {
         watchPaths.remove(watchPath);
     }
-    
+
     public int getCount() {
         return watchPaths.size();
+    }
+
+    public void logWatchPaths() {
+        for (WatchPath path : watchPaths) {
+
+        }
     }
 }

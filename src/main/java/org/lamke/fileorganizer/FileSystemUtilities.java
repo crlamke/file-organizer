@@ -35,29 +35,28 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Chris Lamke <https://chris.lamke.org>
  */
-public class FileUtilities {
+public class FileSystemUtilities {
 
-    private static FileUtilities fileUtilitiesInstance = null;
+    private static FileSystemUtilities fileUtilitiesInstance = null;
 
-    private final Logger logger = LogManager.getLogger(
-            FileUtilities.class.getName());
+    private final Logger logger = LogManager.getLogger(FileSystemUtilities.class.getName());
 
     /**
      * Private FileUtilities constructor because this is a singleton class.
      *
      */
-    private FileUtilities() {
+    private FileSystemUtilities() {
 
     }
 
     /**
-     * Public static method to get instance of FileUtilities class.
+     * Public static method to get instance of FileSystemUtilities class.
      *
-     * @return FileUtilities object instance
+     * @return FileSystemUtilities object instance
      */
-    public static FileUtilities getInstance() {
+    public static FileSystemUtilities getInstance() {
         if (fileUtilitiesInstance == null) {
-            fileUtilitiesInstance = new FileUtilities();
+            fileUtilitiesInstance = new FileSystemUtilities();
         }
 
         return fileUtilitiesInstance;
@@ -76,11 +75,11 @@ public class FileUtilities {
         try {
             result = Files.move(Paths.get(source), Paths.get(dest));
         } catch (IOException e) {
-            System.out.println("Exception during attempt to move: " + e.getMessage());
+            logger.error("Exception during attempt to move: " + e.getMessage());
         }
         if (result != null) {
             moveStatus = true;
-            logger.info("File {} moved from {} to {}", "file", source, dest);
+            logger.debug("File {} moved from {} to {}", "file", source, dest);
         } else {
             logger.error("File {} not moved from {} to {}",
                     "file", source, dest);
@@ -89,6 +88,32 @@ public class FileUtilities {
 
     }
 
+        /**
+     * Copy a file from one location to another on the local file system.
+     *
+     * @param source source path of file to be moved
+     * @param dest destination path for file move
+     * @return boolean true if move succeeded, false otherwise
+     */
+    public boolean copyFile(String source, String dest) {
+        boolean copyStatus = false;
+        Path result = null;
+        try {
+            result = Files.copy(Paths.get(source), Paths.get(dest));
+        } catch (IOException e) {
+            logger.error("Exception during attempt to copy: " + e.getMessage());
+        }
+        if (result != null) {
+            copyStatus = true;
+            logger.debug("File {} copied from {} to {}", "file", source, dest);
+        } else {
+            logger.error("File {} not copied from {} to {}",
+                    "file", source, dest);
+        }
+        return copyStatus;
+
+    }
+    
     /**
      * Get the file name from a file path.
      *

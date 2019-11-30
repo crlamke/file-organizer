@@ -31,6 +31,7 @@ package org.lamke.fileorganizer;
 public class WatchPath {
     boolean isRecursive = false;
     String path = null;
+    
     WatchPath(String path, boolean isRecursive) {
         this.isRecursive = isRecursive;
         this.path = path;

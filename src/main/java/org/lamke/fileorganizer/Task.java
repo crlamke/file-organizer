@@ -33,7 +33,6 @@ public class Task {
     /**
      * This is the Task constructor.
      *
-     * @author Chris Lamke <https://chris.lamke.org>
      *
      */
     Task() {

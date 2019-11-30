@@ -26,6 +26,8 @@ package org.lamke.fileorganizer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tika.Tika;
 
 /**
@@ -36,25 +38,37 @@ import org.apache.tika.Tika;
  */
 public class FileTypeDecider {
 
-    // Create FileTypes from rules loaded into Config
+    private static FileTypeDecider fileTypeDecider = null;
+    private final Logger logger
+            = LogManager.getLogger(FileTypeDecider.class.getName());
     Tika tika = null;
 
     /**
-     * This class manages the application log file(s) and provides a generic
-     * logging interface that will allow changing the underlying log engine
-     * without refactoring lots of code.
+     * Private FileTypeDecider constructor because this is a singleton class.
+     * 
      *
      */
-    public FileTypeDecider(Config configuration) throws IOException {
-
+    private FileTypeDecider() {
         tika = new Tika();
-
     }
 
     /**
-     * This class manages the application log file(s) and provides a generic
-     * logging interface that will allow changing the underlying log engine
-     * without refactoring lots of code.
+     * Public static method to get instance of FileTypeDecider class.
+     *
+     * @return FileTypeDecider object instance
+     */
+    public static FileTypeDecider getInstance() {
+        if (fileTypeDecider == null) {
+            fileTypeDecider = new FileTypeDecider();
+        }
+
+        return fileTypeDecider;
+    }
+
+    
+    /**
+     * Use Tika to get the file type and return a common string used for the
+     * file type, e.g. docx for Word and jpg for jpeg.
      *
      * @param filePath as String containing path on disk to the file to be ID'd
      * @author Chris Lamke <https://chris.lamke.org>
@@ -62,8 +76,9 @@ public class FileTypeDecider {
      */
     public String getFileType(String filePath) throws IOException {
         String type = tika.detect(new java.io.File(filePath));
-        System.out.println(filePath + ": " + type);
-        return filePath;
+        logger.info("Tika: File {} type identified as {}. Returning {}.",
+                filePath, type, type);
+        return type;
     }
 
 }

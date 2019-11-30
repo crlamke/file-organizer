@@ -10,19 +10,19 @@
 # This section contains watch paths that define the files/directories to watch.
 # Format and an example for this section follows:
 # WATCHPATH [File/Dir Path]	[Recursive Y or N]
-# ex. WATCHPATH "c:\crl\"	Y
-WATCHPATH	"c:\crl\down"	N
-WATCHPATH	"c:\crl\dev\test\src"	N
+# ex. WATCHPATH "c:\crl\" Y
+WATCHPATH "c:\crl\down" N
+WATCHPATH "c:\crl\dev\test\src" N
 
 # *** file-actions ***
 # This section defines what actions to take when a file/directory being watched changes.
 # Changes include creation, deletion, and modification.
 # Fields must be formatted in the order below:
-#       ACTION    FileType    ChangeType  ActionType  ActionPath
-# ex.   ACTION      GIF         CREATE      MOVE      "c:\crl\dev\test"
-ACTION	GIF	CREATE  MOVE	"c:\crl\dev\test\dest"
-ACTION	TXT	CREATE  MOVE	"c:\crl\dev\test\dest"
-ACTION	TXT	MOD     MSG	"c:\crl\dev\test\dest"
-ACTION	PNG	CREATE  MOVE	"c:\crl\dev\test\dest"
-ACTION	JPG	CREATE  MOVE	"c:\crl\dev\test\dest"
+#       ACTION FileType ChangeType ActionType ActionPriority ActionPath
+# ex.   ACTION GIF CREATE MOVE 1 "c:\crl\dev\test"
+ACTION GIF CREATE MOVE 1 "c:\crl\dev\test\dest"
+ACTION TXT CREATE MOVE 1 "c:\crl\dev\test\dest"
+ACTION TXT MOD MSG 2 "c:\crl\dev\test\dest"
+ACTION PNG CREATE MOVE 1 "c:\crl\dev\test\dest"
+ACTION JPG CREATE MOVE 1 "c:\crl\dev\test\dest"
 

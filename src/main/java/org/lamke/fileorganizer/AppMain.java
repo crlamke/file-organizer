@@ -38,6 +38,7 @@ public class AppMain {
     private TaskQueue tasks;
     private FileSystemWatcher fileWatcher;
     FileRecordCollection files;
+    FileSystemUtilities fileUtilities;
 
     /**
      * Constructor for main class
@@ -67,10 +68,12 @@ public class AppMain {
         config.setConfigPath(settingsFilePath);
         config.loadConfig();
 
-        watchPaths = new WatchPathCollection();
+        fileUtilities = FileSystemUtilities.getInstance();
         tasks = new TaskQueue();
         fileWatcher = FileSystemWatcher.getInstance();
         files = FileRecordCollection.getInstance();
+        
+        config.logConfig();
 
         // register directory and process its events
         //fileWatcher.addWatchPath("c:\\crl\\dev\\test", true);
@@ -144,18 +147,23 @@ public class AppMain {
     }
 
     private void processFileCreation(FileNotification notification) {
-        boolean fileExistsOnDisk = files.recordExists(notification.getFilePath());
+        String filePath = notification.getFilePath();
+        boolean fileExistsOnDisk = files.recordExists(filePath);
         if (fileExistsOnDisk) {
             logger.info(
                     "File Creation: File {} already exists in file store",
-                    notification.getFilePath());
+                    filePath);
             return;
         }
 
-        FileRecord file = new FileRecord(notification.getFilePath(),
+        FileRecord file = new FileRecord(filePath,
                 notification.getFileNotificationType());
-        if (file.validateFileRecord()) {
-            files.addFileRecord(notification.getFilePath(), file);
+        if (file.buildFileRecord()) {
+            //Test copy of files
+            String destPath = "c:\\crl\\dev\\test\\dest\\" + file.getFileName();
+            fileUtilities.copyFile(filePath, destPath);
+            file.filePath = destPath;
+            files.addFileRecord(destPath, file);
             logger.info(
                     "Added file to store. New store count is: {}",
                     files.getFileRecordCount());
@@ -168,14 +176,6 @@ public class AppMain {
     }
 
     private void processFileDeletion(FileNotification notification) {
-        boolean fileExistsOnDisk = files.recordExists(notification.getFilePath());
-        if (!fileExistsOnDisk) {
-            logger.info(
-                    "File Deletion: File {} does not exist in file store",
-                    notification.getFilePath());
-            return;
-        }
-
         logger.info("File Deletion: Removing {} from file store",
                 notification.getFilePath());
         files.removeFileRecord(notification.getFilePath());
@@ -185,26 +185,11 @@ public class AppMain {
     }
 
     private void processFileModification(FileNotification notification) {
-        boolean fileExistsOnDisk = files.recordExists(notification.getFilePath());
-        if (!fileExistsOnDisk) {
-            logger.info(
-                    "File Modification: File {} does not exist in file store",
-                    notification.getFilePath());
-            return;
-        }
+        // For now, just log this
+        logger.info(
+                "File Modification event for {}",
+                notification.getFilePath());
 
-        FileRecord file = files.getFileRecord(notification.getFilePath());
-
-        if (file != null) {
-            // Update the file record
-            logger.info(
-                    "File Modification: Modifying {} record",
-                    file.getPath());
-        } else {
-            logger.info(
-                    "File Modification: Failed to find {} record",
-                    notification.getFilePath());
-        }
     }
 
 }

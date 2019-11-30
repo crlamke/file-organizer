@@ -26,9 +26,7 @@ package org.lamke.fileorganizer;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.nio.file.FileSystems;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.util.ArrayList;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,21 +44,20 @@ public class Config {
     private static Config configInstance = null;
 
     private FileSystemWatcher watcher = null;
-    private FileTypeCollection fileTypes = null;
-
     private final Logger logger = LogManager.getLogger(Config.class.getName());
     private String configFile = null;
-    WatchPathCollection watchPaths; // Store watch paths from the config file.
+    ArrayList<WatchPath> watchPaths;
+    ArrayList<FileTypeDefinition> fileTypes;
 
     /**
      * Private Config constructor because this is a singleton class.
      *
-     * @author Chris Lamke <https://chris.lamke.org>
      */
     private Config() {
         try {
             watcher = FileSystemWatcher.getInstance();
-            fileTypes = FileTypeCollection.getInstance();
+            fileTypes = new ArrayList<>();
+            watchPaths = new ArrayList<>();
         } catch (IOException e) {
             logger.log(Level.ERROR, e.toString());
         }
@@ -69,7 +66,6 @@ public class Config {
     /**
      * Public static method to get instance of Config class.
      *
-     * @author Chris Lamke <https://chris.lamke.org>
      * @return Config object instance
      */
     public static Config getInstance() throws IOException {
@@ -84,7 +80,6 @@ public class Config {
      * setConfigPath() allows you to set the config file path. This must be
      * called before you call loadConfig().
      *
-     * @author Chris Lamke <https://chris.lamke.org>
      * @param String path to app configuration file
      */
     void setConfigPath(String configFilePath) {
@@ -95,7 +90,6 @@ public class Config {
      * Load the app configuration from the config file on disk, initializing
      * WatchPaths and other relevant objects to prepare for operation.
      *
-     * @author Chris Lamke <https://chris.lamke.org>
      */
     public void loadConfig() {
         logger.debug("Starting Config load");
@@ -138,9 +132,8 @@ public class Config {
      * WatchPaths and other relevant objects to reset app to default state.
      * After returning app to default state, we will call loadConfig().
      *
-     * @author Chris Lamke <https://chris.lamke.org>
      */
-    void reloadConfig() {
+    public void reloadConfig() {
 
     }
 
@@ -156,22 +149,44 @@ public class Config {
 
         logger.debug("Adding Watch Path: {}. Recursion = {}", path, isRecursive);
         path = path.replace("\"", "");
+        WatchPath watchPath = new WatchPath(path, isRecursive);
+        watchPaths.add(watchPath);
+
+        // Add to FileSystemWatcher
         watcher.addWatchPath(path, isRecursive);
     }
 
     private void addAction(String[] lineParts) {
-        //Line Format: ACTION	GIF	CREATE  MOVE	"c:\crl\dev\test\dest"
+        //Line Format: ACTION	GIF	CREATE  MOVE 1 "c:\crl\dev\test\dest"
         String fileType = lineParts[1];
         String changeType = lineParts[2];
         String action = lineParts[3];
-        String path = lineParts[4];
+        int priority = Integer.parseInt(lineParts[4]);
+        String path = lineParts[5];
 
-        logger.debug(
-                "Adding action: {} for file type {}, change type {}, path {}",
-                action, fileType, changeType, path);
+        logger.info("Adding File Type Definition: For {} with change {} do action "
+                + "{} priority {} with path {}",
+                fileType, changeType, action, priority, path);
         path = path.replace("\"", "");
-        FileTypeDefinition fileTypeDefinition = new FileTypeDefinition();
-        fileTypes.addFileType(fileTypeDefinition);
+        FileTypeDefinition fileTypeDefinition
+                = new FileTypeDefinition(fileType, changeType, action,
+                        path, priority);
+        fileTypes.add(fileTypeDefinition);
+
+    }
+
+    public void logConfig() {
+        logger.info("Begin Log of Config");
+        logger.info("Watch Paths");
+        for (WatchPath path : watchPaths) {
+            logger.info("Path: {}. Recursive = {}",
+                    path.getPathString(), path.isPathRecursive());
+        }
+        logger.info("File Type Definitions");
+        fileTypes.forEach((_item) -> {
+            logger.info("File Type: {}",
+                    _item.getFileTypeDefinitionAsString());
+        });
 
     }
 

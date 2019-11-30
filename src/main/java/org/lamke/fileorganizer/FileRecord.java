@@ -23,7 +23,10 @@
  */
 package org.lamke.fileorganizer;
 
+import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class represents a file (including a directory) on the file system.
@@ -32,8 +35,10 @@ import java.util.logging.Logger;
  */
 public class FileRecord {
 
+    private final org.apache.logging.log4j.Logger logger
+            = LogManager.getLogger(FileRecord.class.getName());
     private boolean isDir = false;
-    private boolean isValidated = false;
+    private boolean buildSuccessful = false;
     // All supported file types are listed here.
     //public enum FileRecord {
     //    GIF, JPG, PNG, WORD, PPT, XLS, TXT, XML, PDF
@@ -43,7 +48,6 @@ public class FileRecord {
     FileNotification.NotificationType notificationType
             = FileNotification.NotificationType.NONE;
     String fileTypeName = "Unknown";
-    String fileTypeDesc = "Unknown";
     String createFileAction = "Move file to new location";
     String modifyFileAction = "Log that file was modified";
     String deleteFileAction = "Log that file was deleted";
@@ -58,19 +62,40 @@ public class FileRecord {
         this.notificationType = notificationType;
     }
 
-    public boolean validateFileRecord() {
-        FileUtilities fileUtilities = FileUtilities.getInstance();
+    public boolean buildFileRecord() {
+        FileSystemUtilities fileUtilities = FileSystemUtilities.getInstance();
 
         // Verify if path exists and whether it's a directory
         if (fileUtilities.filePathExists(filePath)) {
-            isValidated = true;
+            buildSuccessful = true;
             isDir = fileUtilities.isDirectory(filePath);
             fileName = fileUtilities.getFileNameFromPath(filePath);
+            try {
+                getFileRecordType();
+            } catch (IOException ex) {
+                logger.info(
+                        "Exception: Failed to determine type of {}",
+                        filePath);
+            }
         }
-        return isValidated;
+        return buildSuccessful;
+    }
+
+    public String getFileRecordType() throws IOException {
+        if (fileTypeName.equals("Unknown")) {
+            FileTypeDecider decider = FileTypeDecider.getInstance();
+            fileTypeName = decider.getFileType(filePath);
+        }
+
+        return fileTypeName;
     }
 
     public String getPath() {
         return filePath;
     }
+
+    public String getFileName() {
+        return fileName;
+    }
+    
 }

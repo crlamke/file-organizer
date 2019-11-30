@@ -274,7 +274,6 @@ public class FileSystemWatcher {
                 case "ENTRY_MODIFY":
                     notification.addNotificationType(
                             FileNotification.NotificationType.MODIFY);
-
                     break;
                 case "OVERFLOW":
                     notification.addNotificationType(
