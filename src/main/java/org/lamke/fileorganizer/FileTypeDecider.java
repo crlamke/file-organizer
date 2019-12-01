@@ -24,8 +24,8 @@
 package org.lamke.fileorganizer;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tika.Tika;
@@ -38,18 +38,26 @@ import org.apache.tika.Tika;
  */
 public class FileTypeDecider {
 
+    // All supported file types are listed here.
+    // public enum FileRecord {
+    //    GIF, JPG, PNG, WORD, PPT, XLS, TXT, XML, PDF
+    //}
     private static FileTypeDecider fileTypeDecider = null;
     private final Logger logger
             = LogManager.getLogger(FileTypeDecider.class.getName());
     Tika tika = null;
 
+    Map fileTypeCodes;
+
     /**
      * Private FileTypeDecider constructor because this is a singleton class.
-     * 
+     *
      *
      */
     private FileTypeDecider() {
         tika = new Tika();
+        fileTypeCodes = new HashMap();
+        loadFileTypeCodes();
     }
 
     /**
@@ -65,20 +73,45 @@ public class FileTypeDecider {
         return fileTypeDecider;
     }
 
-    
+    /**
+     * Load the translations from the Tika return value into a
+     * user-understandable short code.
+     *
+     * For now, we'll hard code these. Ideally, we'll load these from an
+     * external file.
+     *
+     */
+    private void loadFileTypeCodes() {
+        fileTypeCodes.put("image/jpeg", "jpg");
+        fileTypeCodes.put("image/png", "png");
+        fileTypeCodes.put("image/bmp", "bmp");
+        fileTypeCodes.put("text/plain", "txt");
+        fileTypeCodes.put("application/octet-stream", "UNK");
+        fileTypeCodes.put("application/rtf", "rtf");
+        fileTypeCodes.put("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "doc");
+        fileTypeCodes.put("application/zip", "zip");
+        fileTypeCodes.put("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xls");
+
+    }
+
     /**
      * Use Tika to get the file type and return a common string used for the
-     * file type, e.g. docx for Word and jpg for jpeg.
+     * file type, e.g.docx for Word and jpg for jpeg.
      *
      * @param filePath as String containing path on disk to the file to be ID'd
-     * @author Chris Lamke <https://chris.lamke.org>
+     * @return
      * @throws java.io.IOException
      */
-    public String getFileType(String filePath) throws IOException {
-        String type = tika.detect(new java.io.File(filePath));
-        logger.info("Tika: File {} type identified as {}. Returning {}.",
-                filePath, type, type);
-        return type;
+    public String getFileType(String filePath) {
+        try {
+            String type = tika.detect(new java.io.File(filePath));
+            logger.info("Tika: File {} type identified as {}. Returning {}.",
+                    filePath, type, type);
+            return type;
+        } catch (IOException ex) {
+            logger.info("Tika Exception: {}", ex);
+            return "UNK";
+        }
     }
 
 }

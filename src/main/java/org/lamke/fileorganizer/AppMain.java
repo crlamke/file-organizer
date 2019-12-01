@@ -34,7 +34,6 @@ import org.apache.logging.log4j.LogManager;
 public class AppMain {
 
     private Logger logger = LogManager.getLogger(AppMain.class.getName());
-    private WatchPathCollection watchPaths;
     private TaskQueue tasks;
     private FileSystemWatcher fileWatcher;
     FileRecordCollection files;

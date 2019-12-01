@@ -1,3 +1,6 @@
+package org.lamke.fileorganizer;
+
+
 /*
  * The MIT License
  *
@@ -21,58 +24,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lamke.fileorganizer;
-
-import java.util.ArrayList;
-
 /**
- * This class holds all the currently active watch paths, along with their
- * status.
  *
  * @author Chris Lamke <https://chris.lamke.org>
  */
-public class WatchPathCollection {
+public class FileTypeActionDef {
 
-    private static WatchPathCollection watchPathCollectionInstance = null;
-    ArrayList<WatchPath> watchPaths;
+    String fileTypeName = "";
+    String changeType = "";
+    String action = "";
+    String changePath = "";
+    int priority = 1;
 
-    /**
-     * Private WatchPathCollection constructor because this is a singleton
-     * class.
-     *
-     */
-    private WatchPathCollection() {
-        watchPaths = new ArrayList<>();
+    public FileTypeActionDef(String fileTypeName, String changeType,
+            String action, String changePath, int priority) {
+        this.fileTypeName = fileTypeName;
+        this.changeType = changeType;
+        this.action = action;
+        this.changePath = changePath;
+        this.priority = priority;
     }
 
-    /**
-     * Public static method to get instance of Config class.
-     *
-     * @author Chris Lamke <https://chris.lamke.org>
-     */
-    public static WatchPathCollection getInstance() {
-        if (watchPathCollectionInstance == null) {
-            watchPathCollectionInstance = new WatchPathCollection();
-        }
-
-        return watchPathCollectionInstance;
-    }
-
-    public void addWatchPath(WatchPath watchPath) {
-        watchPaths.add(watchPath);
-    }
-
-    public void removeWatchPath(WatchPath watchPath) {
-        watchPaths.remove(watchPath);
-    }
-
-    public int getCount() {
-        return watchPaths.size();
-    }
-
-    public void logWatchPaths() {
-        for (WatchPath path : watchPaths) {
-
-        }
+    public String getFileTypeActionDefAsString() {
+        String fileTypeDef = "Type " + fileTypeName + " change " + changeType
+                + " action " + action + " priority " + priority + " path "
+                + changePath;
+        return fileTypeDef;
     }
 }

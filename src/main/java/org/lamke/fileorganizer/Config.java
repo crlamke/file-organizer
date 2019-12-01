@@ -47,7 +47,7 @@ public class Config {
     private final Logger logger = LogManager.getLogger(Config.class.getName());
     private String configFile = null;
     ArrayList<WatchPath> watchPaths;
-    ArrayList<FileTypeDefinition> fileTypes;
+    ArrayList<FileTypeActionDef> fileTypes;
 
     /**
      * Private Config constructor because this is a singleton class.
@@ -168,8 +168,8 @@ public class Config {
                 + "{} priority {} with path {}",
                 fileType, changeType, action, priority, path);
         path = path.replace("\"", "");
-        FileTypeDefinition fileTypeDefinition
-                = new FileTypeDefinition(fileType, changeType, action,
+        FileTypeActionDef fileTypeDefinition
+                = new FileTypeActionDef(fileType, changeType, action,
                         path, priority);
         fileTypes.add(fileTypeDefinition);
 
@@ -185,7 +185,7 @@ public class Config {
         logger.info("File Type Definitions");
         fileTypes.forEach((_item) -> {
             logger.info("File Type: {}",
-                    _item.getFileTypeDefinitionAsString());
+                    _item.getFileTypeActionDefAsString());
         });
 
     }
