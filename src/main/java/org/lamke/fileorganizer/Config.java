@@ -164,9 +164,9 @@ public class Config {
         int priority = Integer.parseInt(lineParts[4]);
         String path = lineParts[5];
 
-        logger.info("Adding File Type Definition: For {} with change {} do action "
-                + "{} priority {} with path {}",
-                fileType, changeType, action, priority, path);
+        logger.debug("Adding File Action: Priority {} - When {} has change {},"
+                + " do {} with path {}",
+                priority, fileType, changeType, action, path);
         path = path.replace("\"", "");
         FileTypeActionDef fileTypeDefinition
                 = new FileTypeActionDef(fileType, changeType, action,

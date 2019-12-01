@@ -72,7 +72,7 @@ public class AppMain {
         fileWatcher = FileSystemWatcher.getInstance();
         files = FileRecordCollection.getInstance();
         
-        config.logConfig();
+        //config.logConfig();
 
         // register directory and process its events
         //fileWatcher.addWatchPath("c:\\crl\\dev\\test", true);

@@ -91,6 +91,8 @@ public class FileTypeDecider {
         fileTypeCodes.put("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "doc");
         fileTypeCodes.put("application/zip", "zip");
         fileTypeCodes.put("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xls");
+        fileTypeCodes.put("application/pdf", "pdf");
+        fileTypeCodes.put("video/mp4", "pdf");
 
     }
 
