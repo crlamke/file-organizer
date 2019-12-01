@@ -107,9 +107,11 @@ public class FileTypeDecider {
     public String getFileType(String filePath) {
         try {
             String type = tika.detect(new java.io.File(filePath));
+            String typeCode = (String) fileTypeCodes.get(type);
+            
             logger.info("Tika: File {} type identified as {}. Returning {}.",
-                    filePath, type, type);
-            return type;
+                    filePath, type, typeCode);
+            return typeCode;
         } catch (IOException ex) {
             logger.info("Tika Exception: {}", ex);
             return "UNK";
